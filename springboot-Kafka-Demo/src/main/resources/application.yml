@@ -1,0 +1,42 @@
+
+spring:
+  kafka:
+    # 初始连接地址
+    bootstrap-servers: 192.168.146.128:9092
+    #
+    producer:
+      # 设置生产者在发生可恢复的错误时，进行消息重试的次数。当设置为 0 时，生产者不会重试消息发送。默认值为 0。
+      retries: 0
+      # 指定生产者在发送消息之前等待积累一批消息的大小（以字节为单位）。当达到指定的批次大小后，生产者将批量发送消息 默认16384 16kb
+      batch-size: 16384
+      # 设置生产者用于存储尚未发送的消息的缓冲区大小
+      buffer-memory: 33554432
+      # 指定用于序列化消息键（key）的序列化器类
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 指定用于序列化消息值（value）的序列化器类
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # acks=0 生产者不会等待 broker 的确认，直接将消息发送出去。这样会存在消息丢失的风险，但吞吐量最高
+      # acks=1 生产者会等待 broker 的确认，确保消息至少发送到 leader 分区。这样会减少消息丢失的风险，
+      # acks=-1 -1或all:生产者会等待 broker 的确认，确保消息在所有副本（包括 leader 和所有的副本）都收到。这样可以最大程度地减少消息丢失的风险，但吞吐量最低
+      # 设置生产者要求 broker 确认接收消息的方式
+      acks: 1
+    consumer:
+      # 指定消费者自动提交偏移量的时间间隔。
+      auto-commit-interval: 1S
+      # 指定当消费者发现没有初始偏移量或当前偏移量有错位时该如何处理
+      auto-offset-reset: earliest
+      # 设置消费者是否自动提交偏移量。如果设置为 true，消费者将自动提交偏移量；如果设置为 false，需要手动管理偏移量的提交。
+      enable-auto-commit: false
+      # 指定用于反序列化消息键（key）的反序列化器类
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # 指定用于反序列化消息值（value）的反序列化器类
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      # 指定侦听器容器的线程/consumer的数量，即并发处理的消费者线程数。
+      concurrency: 5
+      # 指定侦听器在消费消息后如何进行确认。
+      ack-mode: manual_immediate
+      # 设置侦听器在尝试订阅不存在的主题时是否抛出致命错误。如果设置为 false，将忽略不存在的主题；如果设置为 true，则会抛出异常
+      missing-topics-fatal: false
+server:
+  port: 8070
